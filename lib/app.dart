@@ -1,9 +1,62 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_html/flutter_html.dart';
 
 class LearnApp extends HookWidget {
+
+  var gifUrl = "https://tva1.sinaimg.cn/mw690/006v119zly1gsu8ni6jbbg30a007q1l2.gif";
+
+  Widget load() {
+    Completer<Size> completer = Completer();
+    Image image = Image.network(gifUrl,
+        frameBuilder: (ctx, child, frame, _) {
+      if (frame == null) {
+        if (!completer.isCompleted) {
+          completer.completeError("error");
+        }
+        return child;
+      } else {
+        return child;
+      }
+    });
+
+    image.image.resolve(ImageConfiguration()).addListener(
+          ImageStreamListener((ImageInfo image, bool synchronousCall) {
+            var myImage = image.image;
+            Size size = Size(myImage.width.toDouble(), myImage.height.toDouble());
+            if (!completer.isCompleted) {
+              completer.complete(size);
+            }
+          }, onError: (object, stacktrace) {
+            if (!completer.isCompleted) {
+              completer.completeError(object);
+            }
+          }),
+        );
+    return FutureBuilder<Size>(
+      future: completer.future,
+      builder: (BuildContext buildContext, AsyncSnapshot<Size> snapshot) {
+        if (snapshot.hasData) {
+          return Image.network(
+            gifUrl,
+            frameBuilder: (ctx, child, frame, _) {
+              if (frame == null) {
+                return Text("dd");
+              }
+              return child;
+            },
+          );
+        } else if (snapshot.hasError) {
+          return Text("error");
+        } else {
+          return Text("dd");
+        }
+      },
+    );;
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -11,16 +64,9 @@ class LearnApp extends HookWidget {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text("widget.title"),
+        title: Text("widget title"),
       ),
-      body: SafeArea(
-
-        child: Html(
-          //data: "<p><img src=\"https://tva1.sinaimg.cn/mw690/6dd57921ly1grqsvwx478g2066088e82.gif\" /></p>",
-            data: "<p><img src=\"https://tva1.sinaimg.cn/mw690/006v119zly1gsu8ni6jbbg30a007q1l2.gif\" /></p>"
-        ),
-      ),
+      body: SafeArea(child: load()),
     );
   }
-
 }
