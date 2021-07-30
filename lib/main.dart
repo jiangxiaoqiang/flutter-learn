@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+
+import 'app.dart';
 
 void main() {
   runApp(MyApp());
@@ -10,6 +13,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      checkerboardOffscreenLayers: true,
+      checkerboardRasterCacheImages: true,
+      showPerformanceOverlay: true,
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -97,13 +103,13 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            ElevatedButton(onPressed: (){
+              Widget page = LearnApp();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => page),
+              );
+            }, child: Text("Click")),
           ],
         ),
       ),
