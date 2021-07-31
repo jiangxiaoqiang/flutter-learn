@@ -22,20 +22,23 @@ class LearnApp extends HookWidget {
       }
     });
 
+    ImageStreamListener listener = ImageStreamListener((ImageInfo image, bool synchronousCall) {
+      var myImage = image.image;
+      Size size = Size(myImage.width.toDouble(), myImage.height.toDouble());
+      if (!completer.isCompleted) {
+        completer.complete(size);
+      }
+    }, onError: (object, stacktrace) {
+      if (!completer.isCompleted) {
+        completer.completeError(object);
+      }
+    });
+
     image.image.resolve(ImageConfiguration()).addListener(
-          ImageStreamListener((ImageInfo image, bool synchronousCall) {
-            var myImage = image.image;
-            Size size = Size(myImage.width.toDouble(), myImage.height.toDouble());
-            if (!completer.isCompleted) {
-              completer.complete(size);
-            }
-          }, onError: (object, stacktrace) {
-            if (!completer.isCompleted) {
-              completer.completeError(object);
-            }
-          }),
+          listener
         );
-    return FutureBuilder<Size>(
+
+    var fb = FutureBuilder<Size>(
       future: completer.future,
       builder: (BuildContext buildContext, AsyncSnapshot<Size> snapshot) {
         if (snapshot.hasData) {
@@ -54,7 +57,11 @@ class LearnApp extends HookWidget {
           return Text("dd");
         }
       },
-    );;
+    );
+    if(completer.isCompleted) {
+      image.image.resolve(ImageConfiguration()).removeListener(listener);
+    }
+    return fb;
   }
 
   @override
