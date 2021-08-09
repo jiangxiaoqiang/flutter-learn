@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:global_configuration/global_configuration.dart';
 
 import 'app.dart';
 
 void main() {
+  GlobalConfiguration().loadFromAsset("dev_app_settings");
+  print(GlobalConfiguration().get("baseUrl"));
+
   runApp(MyApp());
 }
 

@@ -1,0 +1,5 @@
+{
+  "baseUrl": "https://api.poemhub.top",
+  "beta-baseUrl": "https://beta-api.poemhub.top",
+  "appId": 1
+}
